@@ -55,88 +55,6 @@
             }
         }
     </script>
-
-    <style>
-        [v-cloak] {
-            display: none !important;
-        }
-
-        body {
-            background-color: #F8FAFC;
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        .collapsible-form-container {
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: max-height 0.5s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.5s cubic-bezier(0.33, 1, 0.68, 1), transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
-        }
-
-        .collapsible-form-container.open {
-            max-height: 600px;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .pattern-grid {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
-            background-size: 40px 40px;
-        }
-
-        .async-node-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .async-node-wrapper::after {
-            content: attr(data-label);
-            position: absolute;
-            bottom: 130%;
-            left: 50%;
-            transform: translateX(-50%) translateY(5px);
-            background: #1E293B;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.2s ease-out;
-            z-index: 50;
-            box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.2);
-        }
-
-        .async-node-wrapper::before {
-            content: '';
-            position: absolute;
-            bottom: 120%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #1E293B transparent transparent transparent;
-            opacity: 0;
-            transition: all 0.2s ease-out;
-            transform: translateY(5px);
-            pointer-events: none;
-            z-index: 49;
-        }
-
-        .async-node-wrapper:hover::after,
-        .async-node-wrapper:hover::before {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-    </style>
 </head>
 
 <body class="font-sans text-siga-text-dark">
@@ -168,7 +86,6 @@
                             <h2 class="text-xl font-bold text-siga-blue-dark mb-1">{{ modalData.nombre }}</h2>
                             <p class="text-siga-text-light mb-4 text-sm"><i class="ri-mail-line"></i> {{ modalData.email
                                 }}</p>
-
                             <div class="grid grid-cols-2 gap-4 text-sm">
                                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-100"><span
                                         class="block text-xs font-bold text-gray-400 uppercase mb-1">DNI</span><span
@@ -177,17 +94,14 @@
                                         class="block text-xs font-bold text-gray-400 uppercase mb-1">Estado</span><span
                                         class="text-siga-success font-bold flex items-center gap-1"><i
                                             class="ri-checkbox-circle-line"></i> {{ modalData.estado }}</span></div>
-
                                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-100"><span
                                         class="block text-xs font-bold text-gray-400 uppercase mb-1">Fecha de
                                         Alta</span><span class="font-mono font-semibold text-gray-700">{{
                                         modalData.fechaSolicitud }}</span></div>
-
                                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex items-center">
                                     <button v-if="modalData.estado === 'Aprobado'" @click="goToLegajo(modalData)"
-                                        class="text-siga-blue-mid hover:text-siga-blue-dark hover:underline font-bold text-xs flex items-center gap-2 transition-colors w-full">
-                                        <i class="ri-external-link-line text-lg"></i> IR AL LEGAJO PERSONAL
-                                    </button>
+                                        class="text-siga-blue-mid hover:text-siga-blue-dark hover:underline font-bold text-xs flex items-center gap-2 transition-colors w-full"><i
+                                            class="ri-external-link-line text-lg"></i> IR AL LEGAJO PERSONAL</button>
                                     <span v-else class="text-xs text-gray-400 italic">Legajo no generado</span>
                                 </div>
                             </div>
@@ -197,7 +111,6 @@
                         <h4 class="text-sm font-bold text-siga-text-dark mb-4">Proceso de Alta y Notificación</h4>
                         <div class="flex items-center justify-between px-4 relative">
                             <div class="absolute left-0 right-0 top-1/2 h-1 bg-gray-100 -z-10"></div>
-
                             <div class="flex flex-col items-center gap-2 bg-white px-2">
                                 <div class="w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all"
                                     :class="getNodeClass(modalData.pasos.db)"><i
@@ -243,24 +156,17 @@
                             class="ri-close-line text-2xl"></i></button>
                 </div>
                 <div class="p-6">
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Nombre y Apellido</label>
-                        <input v-model="newDocente.nombre" type="text" class="w-full p-2 border rounded-lg text-sm"
-                            placeholder="Ej: Juan Pérez">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">DNI</label>
-                        <input v-model="newDocente.dni" type="text" class="w-full p-2 border rounded-lg text-sm"
-                            placeholder="Ej: 12345678">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Email</label>
-                        <input v-model="newDocente.email" type="email" class="w-full p-2 border rounded-lg text-sm"
-                            placeholder="Ej: docente@instituto.edu.ar">
-                    </div>
-                    <div class="bg-blue-50 p-3 rounded text-xs text-siga-blue-dark">
-                        <i class="ri-information-line"></i> Podrá asignar materias a este docente una vez creado.
-                    </div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-gray-700 mb-1">Nombre y
+                            Apellido</label><input v-model="newDocente.nombre" type="text"
+                            class="w-full p-2 border rounded-lg text-sm" placeholder="Ej: Juan Pérez"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-gray-700 mb-1">DNI</label><input
+                            v-model="newDocente.dni" type="text" class="w-full p-2 border rounded-lg text-sm"
+                            placeholder="Ej: 12345678"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-gray-700 mb-1">Email</label><input
+                            v-model="newDocente.email" type="email" class="w-full p-2 border rounded-lg text-sm"
+                            placeholder="Ej: docente@instituto.edu.ar"></div>
+                    <div class="bg-blue-50 p-3 rounded text-xs text-siga-blue-dark"><i class="ri-information-line"></i>
+                        Podrá asignar materias a este docente una vez creado.</div>
                 </div>
                 <div class="bg-gray-50 p-4 flex justify-end gap-2 border-t">
                     <button @click="closeModal"
@@ -282,31 +188,27 @@
                             class="ri-close-line text-2xl"></i></button>
                 </div>
                 <div class="p-6">
-                    <div class="mb-4" v-if="!fixedContextDocente">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Docente</label>
-                        <select v-model="assignData.docenteId" class="w-full p-2 border rounded-lg text-sm">
+                    <div class="mb-4" v-if="!fixedContextDocente"><label
+                            class="block text-sm font-bold text-gray-700 mb-1">Docente</label><select
+                            v-model="assignData.docenteId" class="w-full p-2 border rounded-lg text-sm">
                             <option value="">Seleccione Docente...</option>
                             <option v-for="d in docentesData" :key="d.id" :value="d.id">{{ d.nombre }} ({{ d.dni }})
                             </option>
-                        </select>
-                    </div>
-                    <div class="mb-4" v-if="!fixedContextCarrera">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Carrera</label>
-                        <select v-model="assignData.carreraId" class="w-full p-2 border rounded-lg text-sm"
+                        </select></div>
+                    <div class="mb-4" v-if="!fixedContextCarrera"><label
+                            class="block text-sm font-bold text-gray-700 mb-1">Carrera</label><select
+                            v-model="assignData.carreraId" class="w-full p-2 border rounded-lg text-sm"
                             @change="assignData.materiaId = ''">
                             <option value="">Seleccione Carrera...</option>
                             <option v-for="c in carrerasData" :key="c.id" :value="c.id">{{ c.nombre }}</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Materia</label>
-                        <select v-model="assignData.materiaId" class="w-full p-2 border rounded-lg text-sm"
+                        </select></div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-gray-700 mb-1">Materia</label><select
+                            v-model="assignData.materiaId" class="w-full p-2 border rounded-lg text-sm"
                             :disabled="!assignData.carreraId">
                             <option value="">Seleccione Materia...</option>
                             <option v-for="m in getMateriasByCarrera(assignData.carreraId)" :key="m.id" :value="m.id">{{
                                 m.n }} ({{ m.t }})</option>
-                        </select>
-                    </div>
+                        </select></div>
                 </div>
                 <div class="bg-gray-50 p-4 flex justify-end gap-2 border-t">
                     <button @click="closeModal"
@@ -330,17 +232,14 @@
                 </div>
                 <div class="p-6">
                     <p class="text-sm text-gray-500 mb-4">Plan de: <strong>{{ selectedCarrera?.nombre }}</strong></p>
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Nombre de la Materia</label>
-                        <input v-model="newMateria.nombre" type="text" class="w-full p-2 border rounded-lg text-sm">
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-gray-700 mb-1">Régimen</label>
-                        <select v-model="newMateria.tipo" class="w-full p-2 border rounded-lg text-sm">
+                    <div class="mb-4"><label class="block text-sm font-bold text-gray-700 mb-1">Nombre de la
+                            Materia</label><input v-model="newMateria.nombre" type="text"
+                            class="w-full p-2 border rounded-lg text-sm"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-gray-700 mb-1">Régimen</label><select
+                            v-model="newMateria.tipo" class="w-full p-2 border rounded-lg text-sm">
                             <option value="Anual">Anual</option>
                             <option value="Cuatrimestral">Cuatrimestral</option>
-                        </select>
-                    </div>
+                        </select></div>
                     <div class="mb-4">
                         <label class="block text-sm font-bold text-gray-700 mb-1">Correlativas Requeridas</label>
                         <div class="max-h-32 overflow-y-auto border rounded-lg p-2 bg-gray-50">
@@ -348,8 +247,8 @@
                                 materias disponibles para correlatividad.</div>
                             <label v-for="mat in availableCorrelatives" :key="mat.id"
                                 class="flex items-center gap-2 text-sm mb-1 cursor-pointer hover:bg-gray-100 p-1 rounded">
-                                <input type="checkbox" :value="mat.id" v-model="newMateria.correlativas">
-                                <span class="text-gray-700">{{ mat.n }}</span>
+                                <input type="checkbox" :value="mat.id" v-model="newMateria.correlativas"> <span
+                                    class="text-gray-700">{{ mat.n }}</span>
                             </label>
                         </div>
                     </div>
@@ -476,7 +375,13 @@
                         </form>
                     </div>
                 </div>
-                <div class="mt-auto pt-8 text-center text-xs text-siga-text-light">&copy; 2025 CENT N° 40 - R.N.</div>
+
+                <!-- IMAGEN Y COPYRIGHT CENT 40 (MOVIDO AL BOTTOM) -->
+                <div class="mt-auto pt-8 text-center">
+                    <img src="https://www.cent40.edu.ar/wp-content/uploads/2020/03/cropped-imagen-1170x150_3-2.png"
+                        class="mx-auto h-12 mb-2 object-contain opacity-80" alt="Logo CENT 40">
+                    <div class="text-xs text-siga-text-light">&copy; 2025 CENT N° 40 - R.N.</div>
+                </div>
             </div>
         </div>
 
@@ -863,15 +768,34 @@
 
                                         <!-- Cuerpo Tarjeta -->
                                         <div class="grid grid-cols-2 gap-3 mb-4 text-sm">
-                                            <div>
-                                                <span class="block text-xs text-gray-400 uppercase font-bold">DNI</span>
-                                                <span class="font-mono font-semibold text-gray-700">{{ sol.dni }}</span>
+                                            <div><span
+                                                    class="block text-xs text-gray-400 uppercase font-bold">DNI</span><span
+                                                    class="font-mono font-semibold text-gray-700">{{ sol.dni }}</span>
                                             </div>
-                                            <div>
-                                                <span
-                                                    class="block text-xs text-gray-400 uppercase font-bold">Carrera</span>
-                                                <span class="font-semibold text-gray-700 text-xs">{{ sol.carrera
-                                                    }}</span>
+                                            <div><span
+                                                    class="block text-xs text-gray-400 uppercase font-bold">Carrera</span><span
+                                                    class="async-node-wrapper font-semibold text-gray-700 text-xs"
+                                                    :data-label="sol.carrera">{{
+                                                    getCarreraShortName(sol.carrera) }}</span></div>
+                                        </div>
+
+                                        <!-- NUEVA SECCIÓN: DOCUMENTACIÓN EN MÓVIL (ICONOS CORREGIDOS) -->
+                                        <div class="mb-4">
+                                            <span
+                                                class="block text-xs text-gray-400 uppercase font-bold mb-2">Adjuntos</span>
+                                            <div class="flex gap-2 flex-wrap">
+                                                <div
+                                                    class="bg-blue-50 text-siga-blue-mid px-2 py-1 rounded text-xs font-semibold border border-blue-100 flex items-center gap-1 cursor-pointer hover:bg-blue-100 transition-colors">
+                                                    <i class="ri-account-box-line"></i> DNI (F)
+                                                </div>
+                                                <div
+                                                    class="bg-blue-50 text-siga-blue-mid px-2 py-1 rounded text-xs font-semibold border border-blue-100 flex items-center gap-1 cursor-pointer hover:bg-blue-100 transition-colors">
+                                                    <i class="ri-bank-card-line"></i> DNI (D)
+                                                </div>
+                                                <div
+                                                    class="bg-purple-50 text-purple-600 px-2 py-1 rounded text-xs font-semibold border border-purple-100 flex items-center gap-1 cursor-pointer hover:bg-purple-100 transition-colors">
+                                                    <i class="ri-file-paper-2-line"></i> Título
+                                                </div>
                                             </div>
                                         </div>
 
@@ -908,13 +832,10 @@
                                         <div class="flex gap-2">
                                             <button v-if="sol.estado === 'Pendiente'" @click="procesar(sol.id)"
                                                 :disabled="sol.estado === 'Procesando'"
-                                                class="flex-1 bg-siga-blue-dark text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-siga-blue-mid shadow-sm transition-colors disabled:opacity-50">
-                                                Validar
-                                            </button>
+                                                class="flex-1 bg-siga-blue-dark text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-siga-blue-mid shadow-sm transition-colors disabled:opacity-50">Validar</button>
                                             <button v-if="sol.estado === 'Aprobado'" @click="verDetalleInscripcion(sol)"
-                                                class="flex-1 border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm font-bold hover:border-siga-blue-mid hover:text-siga-blue-dark shadow-sm transition-colors">
-                                                Ver Detalle
-                                            </button>
+                                                class="flex-1 border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm font-bold hover:border-siga-blue-mid hover:text-siga-blue-dark shadow-sm transition-colors">Ver
+                                                Detalle</button>
                                         </div>
                                     </div>
                                 </div>
@@ -944,6 +865,8 @@
                                                     Carrera <i v-if="ordenCol === 'carrera'"
                                                         :class="ordenAsc ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"></i>
                                                 </th>
+                                                <!-- NUEVA COLUMNA: DOCUMENTACIÓN -->
+                                                <th class="px-6 py-4 text-center">Documentación</th>
                                                 <th class="px-6 py-4 text-center">Estado</th>
                                                 <th class="px-6 py-4">Acciones</th>
                                             </tr>
@@ -960,8 +883,28 @@
                                                     <div class="text-xs text-gray-500">{{ sol.email }}</div>
                                                 </td>
                                                 <td class="px-6 py-4"><span
-                                                        class="px-3 py-1 bg-gray-100 rounded-full text-xs font-bold">{{
-                                                        sol.carrera }}</span></td>
+                                                        class="async-node-wrapper px-3 py-1 bg-gray-100 rounded-full text-xs font-bold cursor-help"
+                                                        :data-label="sol.carrera">{{ getCarreraShortName(sol.carrera)
+                                                        }}</span></td>
+
+                                                <!-- NUEVA CELDA: DOCUMENTACIÓN (ICONOS CORREGIDOS) -->
+                                                <td class="px-6 py-4 text-center">
+                                                    <div class="flex gap-2 justify-center">
+                                                        <button
+                                                            class="w-8 h-8 rounded bg-blue-50 text-siga-blue-mid hover:bg-blue-100 border border-blue-100 transition-colors flex items-center justify-center"
+                                                            title="DNI Frente"><i
+                                                                class="ri-account-box-line text-lg"></i></button>
+                                                        <button
+                                                            class="w-8 h-8 rounded bg-blue-50 text-siga-blue-mid hover:bg-blue-100 border border-blue-100 transition-colors flex items-center justify-center"
+                                                            title="DNI Dorso"><i
+                                                                class="ri-bank-card-line text-lg"></i></button>
+                                                        <button
+                                                            class="w-8 h-8 rounded bg-purple-50 text-purple-600 hover:bg-purple-100 border border-purple-100 transition-colors flex items-center justify-center"
+                                                            title="Título Secundario"><i
+                                                                class="ri-file-paper-2-line text-lg"></i></button>
+                                                    </div>
+                                                </td>
+
                                                 <td class="px-6 py-4 min-w-[220px] text-center">
                                                     <div class="flex flex-col items-center gap-2">
                                                         <span v-if="sol.estado === 'Pendiente'"

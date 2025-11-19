@@ -82,10 +82,13 @@ createApp({
         // ==========================================
         // 6. DATOS FICTICIOS (MOCKS)
         // ==========================================
+
+        // CARRERAS (Actualizado con nombreCorto)
         const carrerasData = reactive([
             {
                 id: 1,
                 nombre: 'Tecnicatura Sup. en Desarrollo de Software',
+                nombreCorto: 'TSDS',
                 duracion: '3 Años',
                 materias: [
                     { id: 101, n: 'Programación I', t: 'Anual', correlativas: [] },
@@ -98,6 +101,7 @@ createApp({
             {
                 id: 2,
                 nombre: 'Tecnicatura Sup. en Administración',
+                nombreCorto: 'TSA',
                 duracion: '3 Años',
                 materias: [
                     { id: 201, n: 'Contabilidad Básica', t: 'Anual', correlativas: [] },
@@ -108,6 +112,7 @@ createApp({
             }
         ]);
 
+        // INSCRIPCIONES
         const adminData = reactive([
             // Pendientes
             { id: 101, fechaSolicitud: '18/11/2025', dni: '42.123.456', nombre: 'Gómez, María', email: 'maria.g@gmail.com', carrera: 'Tecnicatura Sup. en Desarrollo de Software', estado: 'Pendiente', pasos: { db: 'pending', moodle: 'pending', sage: 'pending', email: 'pending' }, materiasInscriptas: [] },
@@ -126,6 +131,7 @@ createApp({
             { id: 112, fechaSolicitud: '14/11/2025', dni: '40.111.222', nombre: 'Garcia, Diego', email: 'diego.g@yahoo.com', carrera: 'Tecnicatura Sup. en Administración', estado: 'Aprobado', pasos: { db: 'done', moodle: 'done', sage: 'done', email: 'done' }, materiasInscriptas: ['Economía I'] }
         ]);
 
+        // DOCENTES
         const docentesData = reactive([
             { id: 1, nombre: 'Prof. Martinez, Jorge', dni: '20.111.222', email: 'j.martinez@instituto.edu.ar', asignaciones: [{ carreraId: 1, materiaId: 101 }] },
             { id: 2, nombre: 'Prof. Sanchez, Laura', dni: '21.333.444', email: 'l.sanchez@instituto.edu.ar', asignaciones: [{ carreraId: 1, materiaId: 102 }, { carreraId: 1, materiaId: 103 }] },
@@ -187,7 +193,6 @@ createApp({
                 });
             } else {
                 // AQUÍ ESTÁ EL CAMBIO: 'Procesando' tiene la misma prioridad (1) que 'Pendiente' (1)
-                // Esto evita que salte hacia arriba (antes Procesando era 0)
                 const priority = { 'Procesando': 1, 'Pendiente': 1, 'Aprobado': 2 };
                 data.sort((a, b) => priority[a.estado] - priority[b.estado]);
             }
@@ -246,68 +251,35 @@ createApp({
             const sol = adminData.find(s => s.id === id); if (!sol) return;
             sol.estado = 'Procesando';
 
-            // 1. Ponemos TODOS los estados en 'loading' inmediatamente
             sol.pasos.db = 'loading';
             sol.pasos.moodle = 'loading';
             sol.pasos.sage = 'loading';
             sol.pasos.email = 'loading';
 
-            // 2. Tiempos de espera paralelos (no secuenciales)
-            const dbTask = new Promise(resolve => {
-                setTimeout(() => {
-                    sol.pasos.db = 'done';
-                    resolve();
-                }, 1500); // DB tarda 1.5s
-            });
+            // Simulamos tiempos paralelos
+            const dbTask = new Promise(resolve => setTimeout(() => { sol.pasos.db = 'done'; resolve(); }, 1500));
+            const emailTask = new Promise(resolve => setTimeout(() => { sol.pasos.email = 'done'; resolve(); }, 1000));
+            const moodleTask = new Promise(resolve => setTimeout(() => { sol.pasos.moodle = 'done'; resolve(); }, 2500));
+            const sageTask = new Promise(resolve => setTimeout(() => { sol.pasos.sage = 'done'; resolve(); }, 4000));
 
-            const emailTask = new Promise(resolve => {
-                setTimeout(() => {
-                    sol.pasos.email = 'done';
-                    resolve();
-                }, 1000); // Email es rápido, tarda 1s
-            });
-
-            const moodleTask = new Promise(resolve => {
-                setTimeout(() => {
-                    sol.pasos.moodle = 'done';
-                    resolve();
-                }, 2500); // Moodle tarda 2.5s
-            });
-
-            const sageTask = new Promise(resolve => {
-                setTimeout(() => {
-                    sol.pasos.sage = 'done';
-                    resolve();
-                }, 4000); // SAGE es el más lento, tarda 4s
-            });
-
-            // 3. Esperamos a que TODAS las tareas terminen
             await Promise.all([dbTask, emailTask, moodleTask, sageTask]);
-
-            // 4. Aprobamos
             sol.estado = 'Aprobado';
         };
 
         // --- GESTIÓN DE MODALES Y VISTAS DETALLE ---
-
-        // 1. Modal Detalle (Popup en Inscripciones)
         const verDetalleInscripcion = (solicitud) => {
             modalData.value = solicitud;
-            modalType.value = 'alumno'; // Reutilizamos el diseño del modal
+            modalType.value = 'alumno';
             isModalOpen.value = true;
         };
 
-        // NUEVA FUNCIÓN: Ir al legajo desde el modal
         const goToLegajo = (solicitud) => {
             closeModal();
             openStudentLegajo(solicitud);
         };
 
-        // 2. Vista Completa Legajo (Menu Alumnos)
         const openStudentLegajo = (alumno) => {
             selectedStudent.value = alumno;
-
-            // Inyectar datos simulados si faltan (Mocks para el legajo completo)
             if (!selectedStudent.value.historialFinales) {
                 selectedStudent.value.historialFinales = [
                     { fecha: '15/07/2024', materia: 'Inglés Técnico I', nota: 9, notaStr: 'Nueve' },
@@ -320,16 +292,13 @@ createApp({
                     { tipo: 'Constancia de Examen', fecha: '16/07/2024', estado: 'Entregado' }
                 ];
             }
-            // Simular documentación validada
             if (!selectedStudent.value.documentacion) {
                 selectedStudent.value.documentacion = { dniFrente: true, dniDorso: true, titulo: true };
             }
-
             adminSubView.value = 'detalle_alumno';
         };
 
         const desinscribirAlumno = (alumno, idx) => { if (confirm('¿Desinscribir al alumno de esta materia?')) alumno.materiasInscriptas.splice(idx, 1); };
-
         const openAddDocente = () => { newDocente.nombre = ''; newDocente.dni = ''; newDocente.email = ''; modalType.value = 'new_docente'; isModalOpen.value = true; };
         const saveDocente = () => { if (!newDocente.nombre || !newDocente.dni) return; docentesData.push({ id: Date.now(), ...newDocente, asignaciones: [] }); closeModal(); };
         const deleteDocente = (id) => { if (confirm('¿Eliminar docente?')) { const idx = docentesData.findIndex(d => d.id === id); if (idx !== -1) docentesData.splice(idx, 1); } };
@@ -364,6 +333,12 @@ createApp({
         const toggleCaptcha = () => { captchaChecked.value = !captchaChecked.value; if (captchaChecked.value) errors.captcha = null; };
         const validarAspirante = () => { Object.keys(errors).forEach(k => errors[k] = null); let isValid = true; if (!aspForm.nombre) { errors.nombre = "Requerido"; isValid = false; } if (!aspForm.apellido) { errors.apellido = "Requerido"; isValid = false; } if (!aspForm.dni) { errors.dni = "Requerido"; isValid = false; } if (estadoEmail.value !== 'sent') { errors.email = "Validar Email"; isValid = false; } else if (aspForm.codigo !== '123456') { errors.codigo = "Incorrecto"; isValid = false; } if (!archivoDniFrontal.value) { errors.fileFrontal = "Adjuntar DNI Frente"; isValid = false; } if (!archivoDniDorso.value) { errors.fileDorso = "Adjuntar DNI Dorso"; isValid = false; } if (!archivoNombre.value) { errors.file = "Adjuntar Título"; isValid = false; } if (!captchaChecked.value) { errors.captcha = "Requerido"; isValid = false; } if (isValid) aspiranteEnviado.value = true; };
 
+        // NUEVA FUNCIÓN: Obtener nombre corto
+        const getCarreraShortName = (nombre) => {
+            const carrera = carrerasData.find(c => c.nombre === nombre);
+            return carrera ? carrera.nombreCorto : nombre;
+        };
+
         return {
             currentView, rolSeleccionado, currentUser, mobileMenuOpen, activeForm, loginData, authError, cargandoLogin, recuperacionEnviada, adminSubView,
             aspForm, errors, aspiranteEnviado, adminSearch, adminFilterEstado, adminPage, adminPaginatedData, adminItemsPerPage, ordenCol, ordenAsc,
@@ -376,7 +351,7 @@ createApp({
             triggerFileInput, seleccionarArchivo, triggerDniFrontal, seleccionarDniFrontal, triggerDniDorso, seleccionarDniDorso, toggleCaptcha, validarAspirante,
             verDetalleInscripcion, openStudentLegajo, desinscribirAlumno, closeModal, openAddDocente, saveDocente, deleteDocente, openCareerDetail, deleteCarrera, openAddMateria, openEditMateria, saveMateria, deleteMateria,
             openAssignDocente, getMateriasByCarrera, confirmAssignment, getDocentesAssignedToCareer, unassignDocente, getMateriaName, getAlumnosCount, getDocentesCount,
-            generateCert, saveConfig, goToLegajo
+            generateCert, saveConfig, goToLegajo, getCarreraShortName
         };
     }
 }).mount('#app');
