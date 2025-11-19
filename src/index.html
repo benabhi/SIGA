@@ -147,7 +147,7 @@
         <!-- MODALES (POP-UPS) -->
         <!-- ========================================== -->
 
-        <!-- MODAL DETALLE ALUMNO (MODIFICADO CON EMAIL, FECHA Y LINK) -->
+        <!-- MODAL DETALLE ALUMNO -->
         <div v-if="isModalOpen && modalType === 'alumno'"
             class="fixed inset-0 z-[60] flex items-center justify-center px-4 animate-fade-in">
             <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal"></div>
@@ -169,7 +169,6 @@
                             <p class="text-siga-text-light mb-4 text-sm"><i class="ri-mail-line"></i> {{ modalData.email
                                 }}</p>
 
-                            <!-- GRID INFO ACTUALIZADO -->
                             <div class="grid grid-cols-2 gap-4 text-sm">
                                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-100"><span
                                         class="block text-xs font-bold text-gray-400 uppercase mb-1">DNI</span><span
@@ -179,13 +178,11 @@
                                         class="text-siga-success font-bold flex items-center gap-1"><i
                                             class="ri-checkbox-circle-line"></i> {{ modalData.estado }}</span></div>
 
-                                <!-- NUEVO: Fecha de Alta -->
                                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-100"><span
                                         class="block text-xs font-bold text-gray-400 uppercase mb-1">Fecha de
                                         Alta</span><span class="font-mono font-semibold text-gray-700">{{
                                         modalData.fechaSolicitud }}</span></div>
 
-                                <!-- NUEVO: Enlace a Legajo -->
                                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-100 flex items-center">
                                     <button v-if="modalData.estado === 'Aprobado'" @click="goToLegajo(modalData)"
                                         class="text-siga-blue-mid hover:text-siga-blue-dark hover:underline font-bold text-xs flex items-center gap-2 transition-colors w-full">
@@ -201,7 +198,6 @@
                         <div class="flex items-center justify-between px-4 relative">
                             <div class="absolute left-0 right-0 top-1/2 h-1 bg-gray-100 -z-10"></div>
 
-                            <!-- Pasos (1, 2, 3 y el NUEVO 4) -->
                             <div class="flex flex-col items-center gap-2 bg-white px-2">
                                 <div class="w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all"
                                     :class="getNodeClass(modalData.pasos.db)"><i
@@ -220,8 +216,6 @@
                                         :class="getNodeIcon(modalData.pasos.sage)"></i></div><span
                                     class="text-xs font-semibold text-gray-500">SAGE</span>
                             </div>
-
-                            <!-- NUEVO PASO EMAIL -->
                             <div class="flex flex-col items-center gap-2 bg-white px-2">
                                 <div class="w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all"
                                     :class="getNodeClass(modalData.pasos.email)"><i
@@ -826,7 +820,7 @@
                             </div>
                         </div>
 
-                        <!-- INSCRIPCIONES (MODIFICADO CON 4 CÍRCULOS) -->
+                        <!-- INSCRIPCIONES (MODIFICADO: Tabla en Desktop, Cards en Mobile) -->
                         <div v-if="adminSubView === 'inscripciones'">
                             <div
                                 class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8 animate-fade-in-up">
@@ -851,7 +845,82 @@
                                                 placeholder="Buscar por DNI o Apellido..."></div>
                                     </div>
                                 </div>
-                                <div class="overflow-x-auto">
+
+                                <!-- VISTA MÓVIL: TARJETAS (Cards) -->
+                                <div class="md:hidden p-4 space-y-4 bg-gray-50">
+                                    <div v-for="sol in adminPaginatedData" :key="sol.id"
+                                        class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col">
+                                        <!-- Header Tarjeta -->
+                                        <div class="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h4 class="font-bold text-siga-blue-dark text-lg">{{ sol.nombre }}</h4>
+                                                <span class="text-xs text-gray-500 block">{{ sol.email }}</span>
+                                            </div>
+                                            <span
+                                                class="text-xs font-mono text-gray-400 bg-gray-100 px-2 py-1 rounded">{{
+                                                sol.fechaSolicitud }}</span>
+                                        </div>
+
+                                        <!-- Cuerpo Tarjeta -->
+                                        <div class="grid grid-cols-2 gap-3 mb-4 text-sm">
+                                            <div>
+                                                <span class="block text-xs text-gray-400 uppercase font-bold">DNI</span>
+                                                <span class="font-mono font-semibold text-gray-700">{{ sol.dni }}</span>
+                                            </div>
+                                            <div>
+                                                <span
+                                                    class="block text-xs text-gray-400 uppercase font-bold">Carrera</span>
+                                                <span class="font-semibold text-gray-700 text-xs">{{ sol.carrera
+                                                    }}</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Estado y Pasos (Centrado) -->
+                                        <div
+                                            class="border-t border-gray-100 pt-4 pb-4 flex flex-col items-center gap-3">
+                                            <!-- Badge Estado -->
+                                            <span v-if="sol.estado === 'Pendiente'"
+                                                class="px-3 py-1 rounded-full text-xs font-bold uppercase bg-yellow-100 text-yellow-700">Pendiente</span>
+                                            <span v-else-if="sol.estado === 'Aprobado'"
+                                                class="px-3 py-1 rounded-full text-xs font-bold uppercase bg-green-100 text-green-700">Inscripto</span>
+                                            <span v-else
+                                                class="px-3 py-1 rounded-full text-xs font-bold uppercase bg-blue-100 text-blue-700"><i
+                                                    class="ri-loader-4-line animate-spin"></i> Validando</span>
+
+                                            <!-- Círculos de Progreso -->
+                                            <div class="flex items-center gap-3 justify-center">
+                                                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs transition-all"
+                                                    :class="getNodeClass(sol.pasos.db)"><i
+                                                        :class="getNodeIcon(sol.pasos.db)"></i></div>
+                                                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs transition-all"
+                                                    :class="getNodeClass(sol.pasos.moodle)"><i
+                                                        :class="getNodeIcon(sol.pasos.moodle)"></i></div>
+                                                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs transition-all"
+                                                    :class="getNodeClass(sol.pasos.sage)"><i
+                                                        :class="getNodeIcon(sol.pasos.sage)"></i></div>
+                                                <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs transition-all"
+                                                    :class="getNodeClass(sol.pasos.email)"><i
+                                                        :class="getNodeIcon(sol.pasos.email)"></i></div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botones Acción -->
+                                        <div class="flex gap-2">
+                                            <button v-if="sol.estado === 'Pendiente'" @click="procesar(sol.id)"
+                                                :disabled="sol.estado === 'Procesando'"
+                                                class="flex-1 bg-siga-blue-dark text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-siga-blue-mid shadow-sm transition-colors disabled:opacity-50">
+                                                Validar
+                                            </button>
+                                            <button v-if="sol.estado === 'Aprobado'" @click="verDetalleInscripcion(sol)"
+                                                class="flex-1 border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm font-bold hover:border-siga-blue-mid hover:text-siga-blue-dark shadow-sm transition-colors">
+                                                Ver Detalle
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- VISTA DESKTOP: TABLA (Oculta en móvil) -->
+                                <div class="hidden md:block overflow-x-auto">
                                     <table class="w-full text-sm text-left border-collapse">
                                         <thead class="bg-siga-bg text-siga-text-light uppercase text-xs font-semibold">
                                             <tr>
@@ -922,7 +991,6 @@
                                                                     :class="getNodeClass(sol.pasos.sage)"><i
                                                                         :class="getNodeIcon(sol.pasos.sage)"></i></div>
                                                             </div>
-                                                            <!-- Paso Email (NUEVO) -->
                                                             <div class="async-node-wrapper"
                                                                 data-label="Notificación Email">
                                                                 <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center text-xs transition-all"
