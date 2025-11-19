@@ -1,0 +1,119 @@
+    /* =========================================
+    ESTILOS DE SEGURIDAD (v-cloak)
+    ========================================= */
+    [v-cloak] {
+        display: none !important;
+    }
+
+    /* =========================================
+    ESTILOS BASE
+    ========================================= */
+    body {
+        background-color: #F8FAFC;
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    /* =========================================
+    ANIMACIONES
+    ========================================= */
+    .stagger-1 {
+        animation-delay: 0.1s;
+    }
+
+    .stagger-2 {
+        animation-delay: 0.2s;
+    }
+
+    .stagger-3 {
+        animation-delay: 0.3s;
+    }
+
+    .stagger-4 {
+        animation-delay: 0.4s;
+    }
+
+    .stagger-5 {
+        animation-delay: 0.5s;
+    }
+
+    /* =========================================
+    ACORDEÓN LOGIN
+    ========================================= */
+    .collapsible-form-container {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: max-height 0.5s cubic-bezier(0.33, 1, 0.68, 1),
+            opacity 0.5s cubic-bezier(0.33, 1, 0.68, 1),
+            transform 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+
+    .collapsible-form-container.open {
+        max-height: 600px;
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* =========================================
+    FONDO
+    ========================================= */
+    .pattern-grid {
+        background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1.5px, transparent 1.5px);
+        background-size: 40px 40px;
+    }
+
+    /* =========================================
+    TIMELINE & TOOLTIPS
+    ========================================= */
+    .async-node-wrapper {
+        position: relative;
+        display: inline-block;
+    }
+
+    .async-node-wrapper::after {
+        content: attr(data-label);
+        position: absolute;
+        bottom: 130%;
+        left: 50%;
+        transform: translateX(-50%) translateY(5px);
+        background: #1E293B;
+        color: white;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease-out;
+        z-index: 50;
+        box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    .async-node-wrapper::before {
+        content: '';
+        position: absolute;
+        bottom: 120%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #1E293B transparent transparent transparent;
+        opacity: 0;
+        transition: all 0.2s ease-out;
+        transform: translateY(5px);
+        pointer-events: none;
+        z-index: 49;
+    }
+
+    .async-node-wrapper:hover::after,
+    .async-node-wrapper:hover::before {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
